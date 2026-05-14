@@ -1,31 +1,36 @@
+package com.example.numbermatch;
 import java.util.ArrayList;
 
 
 /**
-* Clase Node
-* Models a node in an 8 way linked list
-* @author Cecilia M. Curlango Rosas
-* @version 01 2026
-*/
+ * Clase Node
+ * Models a node in an 8 way linked list
+ * @author Cecilia M. Curlango Rosas
+ * @version 01 2026
+ */
 public class Node implements Comparable<Node> {
-   private int number; // INFO part
-   private Node up, down,
-           left, right,
-           downLeft, downRight,
-           upLeft, upRight;
+    private boolean esVacio;
+    private int number; // INFO part
+    private Node up, down,
+            left, right,
+            downLeft, downRight,
+            upLeft, upRight;
+
+    private boolean conexionSerpienteDerecha;
+    private boolean conexionSerpienteIzquierda;
 
 
-   public Node(int number) {
-       this.number = number;
-       up = null;
-       down = null;
-       left = null;
-       right = null;
-       downLeft = null;
-       downRight = null;
-       upLeft = null;
-       upRight = null;
-   }
+    public Node(int number) {
+        this.number = number;
+        up = null;
+        down = null;
+        left = null;
+        right = null;
+        downLeft = null;
+        downRight = null;
+        upLeft = null;
+        upRight = null;
+    }
 
     @Override
     public int compareTo(Node otro) {
@@ -38,138 +43,171 @@ public class Node implements Comparable<Node> {
     }
 
 
-   /**
-    * Updates all links
-    * to neighboring nodes so that
-    * nothing points to it anymore.
-    */
-   public void delete() {
-     
-   }
-   /**
-    * Returns whether input node is next to
-    * node.
-    * @return true if nodes are next to each other
-    */
-    public boolean isNeighbor(Node input) {
-        if (input == null) return false;
-
-        return (input == up || input == down ||
-                input == left || input == right ||
-                input == upLeft || input == upRight ||
-                input == downLeft || input == downRight);
+    /**
+     * Updates all links
+     * to neighboring nodes so that
+     * nothing points to it anymore.
+     */
+    public void delete() {
+        this.esVacio = true;
     }
-   /**
-    * Returns whether input node contains same value or
-    * adds up to 10.
-    * @return true if nodes contain the same value or add up to 10
-    */
+    /**
+     * Returns whether input node is next to
+     * node.
+     * @return true if nodes are next to each other
+     */
+    public boolean isNeighbor(Node input) {
+        if (input == null || this.esVacio || input.esVacio) return false;
+        return (input == up || input == down || input == left || input == right ||
+                input == upLeft || input == upRight || input == downLeft || input == downRight);
+    }
+
+    /**
+     * Returns whether input node contains same value or
+     * adds up to 10.
+     * @return true if nodes contain the same value or add up to 10
+     */
     public boolean isMatchValue(Node input) {
         return this.compareTo(input) == 0;
     }
 
-
-   public Node getDown() {
-       return down;
-   }
-
-
-   public void setDown(Node down) {
-       this.down = down;
-   }
+    public void restore() {
+        this.esVacio = false;
+    }
 
 
-   public Node getLeft() {
-       return left;
-   }
+    public Node getDown() {
+        return down;
+    }
 
 
-   public void setLeft(Node left) {
-       this.left = left;
-   }
+    public void setDown(Node down) {
+        this.down = down;
+    }
 
 
-   public Node getRight() {
-       return right;
-   }
+    public Node getLeft() {
+        return left;
+    }
 
 
-   public void setRight(Node right) {
-       this.right = right;
-   }
+    public void setLeft(Node left) {
+        this.left = left;
+    }
 
 
-   public Node getDownLeft() {
-       return downLeft;
-   }
+    public Node getRight() {
+        return right;
+    }
 
 
-   public void setDownLeft(Node downLeft) {
-       this.downLeft = downLeft;
-   }
+    public void setRight(Node right) {
+        this.right = right;
+    }
 
 
-   public Node getDownRight() {
-       return downRight;
-   }
+    public Node getDownLeft() {
+        return downLeft;
+    }
 
 
-   public void setDownRight(Node downRight) {
-       this.downRight = downRight;
-   }
+    public void setDownLeft(Node downLeft) {
+        this.downLeft = downLeft;
+    }
 
 
-   public Node getUpLeft() {
-       return upLeft;
-   }
+    public Node getDownRight() {
+        return downRight;
+    }
 
 
-   public void setUpLeft(Node upLeft) {
-       this.upLeft = upLeft;
-   }
+    public void setDownRight(Node downRight) {
+        this.downRight = downRight;
+    }
 
 
-   public Node getUpRight() {
-       return upRight;
-   }
+    public Node getUpLeft() {
+        return upLeft;
+    }
 
 
-   public void setUpRight(Node upRight) {
-       this.upRight = upRight;
-   }
+    public void setUpLeft(Node upLeft) {
+        this.upLeft = upLeft;
+    }
 
 
-   public Node getUp() {
-       return up;
-   }
+    public Node getUpRight() {
+        return upRight;
+    }
 
 
-   public void setUp(Node up) {
-       this.up = up;
-   }
+    public void setUpRight(Node upRight) {
+        this.upRight = upRight;
+    }
 
 
-   public int getNumber() {
-       return number;
-   }
-   public void setNumber(int number) {
-       this.number = number;
-   }
+    public Node getUp() {
+        return up;
+    }
 
 
-   @Override
-   public String toString() {
-       return number + "";
-   }
+    public void setUp(Node up) {
+        this.up = up;
+    }
 
 
-  /**
-    * Returns an ArrayList containing all non-empty neighboring nodes
-    * @return ArrayList<Node> with neighboring non-empty nodes
-    */
+    public int getNumber() {
+        return number;
+    }
+    public void setNumber(int number) {
+        this.number = number;
+    }
 
 
-   public ArrayList<Node> getNeighbors() {
-       
-   }
+    @Override
+    public String toString() {
+        return esVacio ? "[ ]" : String.valueOf(number);
+    }
+
+
+    /**
+     * Returns an ArrayList containing all non-empty neighboring nodes
+     * @return ArrayList<Node> with neighboring non-empty nodes
+     */
+
+
+    public ArrayList<Node> getNeighbors() {
+        ArrayList<Node> neighbors = new ArrayList<>();
+        Node[] posibles = {up, down, left, right, upLeft, upRight, downLeft, downRight};
+        for (Node n : posibles) {
+            if (n != null && !n.isVacio()) {
+                neighbors.add(n);
+            }
+        }
+        return neighbors;
+    }
+    public boolean isVacio() {
+        return esVacio;
+    }
+
+    public void setVacio(boolean esVacio) {
+        this.esVacio = esVacio;
+    }
+    public boolean isConexionSerpienteDerecha() {
+        return conexionSerpienteDerecha;
+    }
+
+    public void setConexionSerpienteDerecha(boolean conexionSerpienteDerecha) {
+        this.conexionSerpienteDerecha = conexionSerpienteDerecha;
+    }
+
+    public boolean isConexionSerpienteIzquierda() {
+        return conexionSerpienteIzquierda;
+    }
+
+    public void setConexionSerpienteIzquierda(boolean conexionSerpienteIzquierda) {
+        this.conexionSerpienteIzquierda = conexionSerpienteIzquierda;
+    }
+
 }
+
