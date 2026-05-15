@@ -30,24 +30,19 @@ public class Juego {
         this.matchesEncontrados = 0;
     }
 
-//metodo para revisar si se pueden matchear 
-    public boolean intentarMatch(Node n1, Node n2) {
-        if (n1 == null || n2 == null || n1 == n2) return false;
-        if (n1.isNeighbor(n2) && n1.compareTo(n2) == 0) {
-            // Guardar el movimiento en la pila antes de borrar
-            Movimiento mov = new Movimiento(n1, n2);
-            historial.push(mov);
+//metodo para revisar si se pueden matchear
+public boolean intentarMatch(Node n1, Node n2) {
+    if (n1.isNeighbor(n2) && n1.isMatchValue(n2)) {
+        // El juego registra el evento
+        historial.push(new Movimiento(n1, n2));
+        matchesEncontrados++;
+        n1.delete();
+        n2.delete();
 
-            // Aplicar el borrado 
-            n1.delete();
-            n2.delete();
-
-            // 3. Actualizar contador
-            matchesEncontrados++;
-            return true;
-        }
-        return false;
+        return true;
     }
+    return false;
+}
 
     public void deshacerMovimiento() {
         if (!historial.pilaVacia()) {
