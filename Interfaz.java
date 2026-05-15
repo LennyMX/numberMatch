@@ -14,6 +14,7 @@ public class Interfaz extends Application {
     private Label lblMatches, lblPendientes;
     private Node nodoSeleccionado = null;
     private int filas, columnas;
+    private Node[][] matrizVisual;
 
     @Override
     public void start(Stage primaryStage) {
@@ -53,6 +54,18 @@ public class Interfaz extends Application {
         this.columnas = c;
 
         juego = new Juego(f, c);
+        
+        matrizVisual = new Node[filas][columnas];
+        Node filaR = juego.getTablero().getInicio();
+        for (int r = 0; r < filas && filaR != null; r++) {
+            Node colR = filaR;
+            for (int rowC = 0; rowC < columnas && colR != null; rowC++) {
+                matrizVisual[r][rowC] = colR;
+                colR = colR.getRight();
+            }
+            filaR = filaR.getDown();
+        }
+
 
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(10));
@@ -100,61 +113,57 @@ public class Interfaz extends Application {
     }
 
     private void actualizarVistaTablero() {
-
         gridTablero.getChildren().clear();
 
-        Node filaR = juego.getTablero().getInicio();
+        for (int r = 0; r < filas; r++) {
+            for (int c = 0; c < columnas; c++) {
+                Node n = matrizVisual[r][c]; // Usamos la posición original fija
 
-        for (int r = 0; r < filas && filaR != null; r++) {
-
-            Node actual = filaR;
-
-            for (int c = 0; c < columnas && actual != null; c++) {
-
-                Button btnNodo = crearBotonNodo(actual);
-
+                // Si el nodo está marcado como esVacio, crearBotonNodo se encargará
+                // de dibujarlo como un hueco transparente en lugar de saltárselo.
+                Button btnNodo = crearBotonNodo(n);
                 gridTablero.add(btnNodo, c, r);
-
-                actual = actual.getRight();
             }
-
-            filaR = filaR.getDown();
         }
 
         lblMatches.setText("Matches: " + juego.getMatchesEncontrados());
-
         lblPendientes.setText("Pendientes: " + juego.contarPendientes());
     }
 
     private Button crearBotonNodo(Node n) {
+        // Si el nodo es nulo o está vacío, dibujamos un espacio en blanco
+        if (n == null || n.isVacio()) {
+            Button btnVacio = new Button(""); 
+            btnVacio.setPrefSize(45, 45);
+            // Hacemos que el fondo sea igual al del tablero para que parezca un hueco
+            btnVacio.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+            btnVacio.setDisable(true); // No se puede interactuar
+            return btnVacio;
+        }
+
+        // Si el nodo NO está vacío, dibujamos el botón normal
         Button btn = new Button(String.valueOf(n.getNumber()));
         btn.setUserData(n);
         btn.setPrefSize(45, 45);
+        btn.setStyle("-fx-background-color: #ffffff; -fx-border-color: #dddddd; -fx-text-fill: #000000; -fx-font-weight: bold;");
 
-        if (n.isVacio()) {
-            btn.setDisable(true);
-            btn.setStyle("-fx-background-color: #f4f4f4; -fx-text-fill: #cccccc; -fx-opacity: 0.6;");
-        } else {
-            btn.setStyle("-fx-background-color: #ffffff; -fx-border-color: #dddddd; -fx-text-fill: #000000; -fx-font-weight: bold;");
-
-            btn.setOnAction(e -> {
-                if (nodoSeleccionado == null) {
-                    nodoSeleccionado = n;
-                    btn.setStyle("-fx-background-color: #add8e6; -fx-border-color: #333333;"); 
+        btn.setOnAction(e -> {
+            if (nodoSeleccionado == null) {
+                nodoSeleccionado = n;
+                btn.setStyle("-fx-background-color: #add8e6; -fx-border-color: #333333;");
+            } else {
+                if (juego.intentarMatch(nodoSeleccionado, n)) {
+                    actualizarVistaTablero();
+                    if (juego.haTerminado()) mostrarAlerta("Fin", "¡Felicidades!");
                 } else {
-                    if (juego.intentarMatch(nodoSeleccionado, n)) {
-                        actualizarVistaTablero();
-                        if (juego.haTerminado()) mostrarAlerta("Fin", "¡Felicidades, has completado el tablero!");
-                    } else {
-                        actualizarVistaTablero();
-                    }
-                    nodoSeleccionado = null;
+                    actualizarVistaTablero();
                 }
-            });
-        }
+                nodoSeleccionado = null;
+            }
+        });
+
         return btn;
     }
-
     private void mostrarAlerta(String titulo, String contenido) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
