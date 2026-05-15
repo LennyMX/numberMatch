@@ -37,7 +37,7 @@ public class Node implements Comparable<Node> {
         if (otro == null || this.esVacio || otro.esVacio) return -1;
 
         if (this.number == otro.number || (this.number + otro.number == 10)) {
-            return 0; 
+            return 0;
         }
         return -1;
     }
@@ -50,6 +50,21 @@ public class Node implements Comparable<Node> {
      */
     public void delete() {
         this.esVacio = true;
+
+        // Conexión Horizontal: Une Izquierda con Derecha
+        if (left != null) left.setRight(right);
+        if (right != null) right.setLeft(left);
+
+        // Conexión Vertical: Une Arriba con Abajo
+        if (up != null) up.setDown(down);
+        if (down != null) down.setUp(up);
+
+        // Conexiones Diagonales (Ejemplo: upLeft con downRight)
+        if (upLeft != null) upLeft.setDownRight(downRight);
+        if (downRight != null) downRight.setUpLeft(upLeft);
+
+        if (upRight != null) upRight.setDownLeft(downLeft);
+        if (downLeft != null) downLeft.setUpRight(upRight);
     }
     /**
      * Returns whether input node is next to
@@ -57,9 +72,13 @@ public class Node implements Comparable<Node> {
      * @return true if nodes are next to each other
      */
     public boolean isNeighbor(Node input) {
-        if (input == null || this.esVacio || input.esVacio) return false;
-        return (input == up || input == down || input == left || input == right ||
-                input == upLeft || input == upRight || input == downLeft || input == downRight);
+        if (input == null || this.esVacio || input.isVacio()) return false;
+
+        // Comprobamos si el nodo de entrada está en cualquiera de nuestras 8 direcciones
+        return (input == up || input == down ||
+                input == left || input == right ||
+                input == upLeft || input == upRight ||
+                input == downLeft || input == downRight);
     }
 
     /**
@@ -68,11 +87,25 @@ public class Node implements Comparable<Node> {
      * @return true if nodes contain the same value or add up to 10
      */
     public boolean isMatchValue(Node input) {
-        return this.compareTo(input) == 0;
+        if (input == null || this.esVacio || input.isVacio()) return false;
+        int v1 = this.number;
+        int v2 = input.getNumber();
+        return (v1 == v2 || (v1 + v2 == 10));
     }
 
     public void restore() {
         this.esVacio = false;
+
+        // Reconectar con los vecinos que el nodo aún tiene guardados en sus punteros
+        if (up != null) up.setDown(this);
+        if (down != null) down.setUp(this);
+        if (left != null) left.setRight(this);
+        if (right != null) right.setLeft(this);
+
+        if (upLeft != null) upLeft.setDownRight(this);
+        if (upRight != null) upRight.setDownLeft(this);
+        if (downLeft != null) downLeft.setUpRight(this);
+        if (downRight != null) downRight.setDownLeft(this);
     }
 
 
